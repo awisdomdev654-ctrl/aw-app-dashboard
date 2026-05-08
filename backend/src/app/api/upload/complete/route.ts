@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { StemModel } from '@/models/Stem'
+import { StemModel, type StemDoc } from '@/models/Stem'
 import { connectDB, isMongoConfigured } from '@/lib/mongodb'
 import { logAuditEvent } from '@/lib/audit'
 import { corsHeaders, jsonResponse } from '@/lib/cors'
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
   await connectDB()
 
-  const updated = await StemModel.findOneAndUpdate(
+  const updatedRaw = await StemModel.findOneAndUpdate(
     { stemId },
     {
       $set: {
@@ -48,9 +48,11 @@ export async function POST(request: Request) {
     { new: true },
   ).lean()
 
-  if (!updated) {
+  if (!updatedRaw) {
     return jsonResponse({ error: 'Stem not found' }, { status: 404 })
   }
+
+  const updated = updatedRaw as unknown as StemDoc
 
   await logAuditEvent({
     actorId,

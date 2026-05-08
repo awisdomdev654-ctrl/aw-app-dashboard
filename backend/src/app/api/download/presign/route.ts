@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { StemModel } from '@/models/Stem'
+import { StemModel, type StemDoc } from '@/models/Stem'
 import { connectDB, isMongoConfigured } from '@/lib/mongodb'
 import { logAuditEvent } from '@/lib/audit'
 import { presignGetStemObject } from '@/lib/s3'
@@ -38,10 +38,11 @@ export async function POST(request: Request) {
 
   await connectDB()
 
-  const stem = await StemModel.findOne({ stemId }).lean()
-  if (!stem) {
+  const stemRaw = await StemModel.findOne({ stemId }).lean()
+  if (!stemRaw) {
     return jsonResponse({ error: 'Stem not found' }, { status: 404 })
   }
+  const stem = stemRaw as unknown as StemDoc
 
   await StemModel.updateOne(
     { stemId },
