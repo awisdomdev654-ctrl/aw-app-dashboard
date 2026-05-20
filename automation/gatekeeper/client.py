@@ -12,7 +12,12 @@ import requests
 class GatekeeperError(Exception):
     """Raised when the API returns an error response."""
 
-    def __init__(self, message: str, status_code: int | None = None, body: Any = None):
+    def __init__(
+        self,
+        message: str,
+        status_code: int | None = None,
+        body: Any = None,
+    ) -> None:
         super().__init__(message)
         self.status_code = status_code
         self.body = body
@@ -23,12 +28,11 @@ class GatekeeperClient:
 
     def __init__(
         self,
-        base_url: str = "http://127.0.0.1:3000",
-        *,
+        base_url: str,
         actor_id: str | None = None,
         actor_label: str | None = None,
         timeout: float = 60.0,
-    ):
+    ) -> None:
         self.base_url = base_url.rstrip("/")
         self.actor_id = actor_id
         self.actor_label = actor_label
@@ -50,16 +54,15 @@ class GatekeeperClient:
         self,
         method: str,
         path: str,
-        *,
         json: dict[str, Any] | None = None,
         params: dict[str, Any] | None = None,
     ) -> Any:
         response = self._session.request(
             method,
             self._url(path),
+            timeout=self.timeout,
             json=json,
             params=params,
-            timeout=self.timeout,
         )
         try:
             data = response.json()
@@ -82,13 +85,12 @@ class GatekeeperClient:
         data = self._request("GET", "/api/stems")
         return data.get("stems", [])
 
-    def audit_events(self, *, limit: int = 50) -> list[dict[str, Any]]:
+    def audit_events(self, limit: int = 50) -> list[dict[str, Any]]:
         data = self._request("GET", "/api/audit", params={"limit": limit})
         return data.get("events", [])
 
     def presign_upload(
         self,
-        *,
         file_path: Path,
         title: str,
         owner: str,
@@ -96,7 +98,7 @@ class GatekeeperClient:
     ) -> dict[str, Any]:
         path = file_path.resolve()
         if not path.is_file():
-            raise FileNotFoundError(path)
+            raise FileNotFoundError(str(path))
 
         guessed, _ = mimetypes.guess_type(path.name)
         payload = {
@@ -111,7 +113,6 @@ class GatekeeperClient:
     def complete_upload(
         self,
         stem_id: str,
-        *,
         size_bytes: int | None = None,
     ) -> dict[str, Any]:
         payload: dict[str, Any] = {"stemId": stem_id, **self._actor_fields()}
@@ -126,33 +127,31 @@ class GatekeeperClient:
     def upload_file(
         self,
         file_path: Path | str,
-        *,
         title: str,
         owner: str,
         content_type: str | None = None,
     ) -> dict[str, Any]:
         """Presign, PUT bytes to S3, then mark upload complete."""
         path = Path(file_path)
-        presign = self.presign_upload(
-            file_path=path,
-            title=title,
-            owner=owner,
-            content_type=content_type,
-        )
+        presign = self.presign_upload(path, title, owner, content_type)
 
-        guessed_type = content_type or mimetypes.guess_type(path.name)[0] or "application/octet-stream"
-
+        guessed_type, _ = mimetypes.guess_type(path.name)
         upload_url = presign.get("uploadUrl")
+        stem_id = presign["stemId"]
+
+        uploaded_to_s3 = False
         if upload_url:
             with path.open("rb") as handle:
                 put = self._session.put(
                     upload_url,
                     data=handle,
+                    timeout=self.timeout,
                     headers={
-                        "Content-Type": guessed_type,
+                        "Content-Type": content_type
+                        or guessed_type
+                        or "application/octet-stream",
                         "x-amz-server-side-encryption": "AES256",
                     },
-                    timeout=self.timeout,
                 )
             if not put.ok:
                 raise GatekeeperError(
@@ -160,19 +159,19 @@ class GatekeeperClient:
                     status_code=put.status_code,
                     body=put.text,
                 )
+            uploaded_to_s3 = True
         elif not presign.get("mockCloud"):
             raise GatekeeperError(
                 "No uploadUrl in presign response (S3 may be misconfigured)",
                 body=presign,
             )
 
-        stem_id = presign["stemId"]
-        complete = self.complete_upload(stem_id, size_bytes=path.stat().st_size)
+        complete = self.complete_upload(stem_id, path.stat().st_size)
         return {
             "stemId": stem_id,
             "s3Key": presign.get("s3Key"),
-            "mockCloud": presign.get("mockCloud", False),
-            "uploadedToS3": bool(upload_url),
+            "mockCloud": bool(presign.get("mockCloud")),
+            "uploadedToS3": uploaded_to_s3,
             "complete": complete,
         }
 
@@ -186,13 +185,16 @@ class GatekeeperClient:
         presign = self.presign_download(stem_id)
 
         download_url = presign.get("downloadUrl")
+        if presign.get("mockCloud"):
+            raise GatekeeperError(
+                "GATEKEEPER_MOCK_CLOUD is enabled; no real download URL",
+                body=presign,
+            )
         if not download_url:
-            if presign.get("mockCloud"):
-                raise GatekeeperError(
-                    "GATEKEEPER_MOCK_CLOUD is enabled; no real download URL",
-                    body=presign,
-                )
-            raise GatekeeperError("No downloadUrl in presign response", body=presign)
+            raise GatekeeperError(
+                "No downloadUrl in presign response",
+                body=presign,
+            )
 
         get = self._session.get(download_url, timeout=self.timeout)
         if not get.ok:
@@ -204,6 +206,7 @@ class GatekeeperClient:
 
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_bytes(get.content)
+
         return {
             "stemId": stem_id,
             "outputPath": str(out.resolve()),
