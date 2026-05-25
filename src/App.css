@@ -102,13 +102,180 @@
 }
 
 .status {
-  color: #1db954;
   font-size: 0.82rem;
   font-weight: 600;
-  border: 1px solid rgba(29, 185, 84, 0.4);
-  padding: 0.2rem 0.5rem;
+  padding: 0.25rem 0.55rem;
   border-radius: 8px;
   white-space: nowrap;
+}
+
+.status-solid {
+  color: #0a0d14;
+  background: #1db954;
+  border: 1px solid #1db954;
+}
+
+.status-outline {
+  color: #1db954;
+  background: transparent;
+  border: 1px solid rgba(29, 185, 84, 0.55);
+}
+
+.status-pending {
+  color: #f5c842;
+  background: rgba(245, 200, 66, 0.12);
+  border: 1px solid rgba(245, 200, 66, 0.55);
+}
+
+.stem-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.btn-small {
+  padding: 0.3rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.security-pill-warn {
+  border-color: rgba(245, 200, 66, 0.55);
+  background: rgba(245, 200, 66, 0.12);
+  color: #ffe08a;
+}
+
+.health-dots {
+  display: inline-flex;
+  gap: 0.25rem;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.ok {
+  background: #1db954;
+}
+
+.dot.bad {
+  background: #e85d5d;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.banner-error {
+  background: rgba(232, 93, 93, 0.15);
+  border: 1px solid rgba(232, 93, 93, 0.45);
+  color: #ffb4b4;
+}
+
+.banner-dismiss {
+  flex-shrink: 0;
+  font-size: 0.82rem;
+}
+
+.loading,
+.empty-state {
+  color: #9dadc8;
+  text-align: left;
+  margin: 0;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
+}
+
+.modal {
+  background: #12141a;
+  border: 1px solid #2a3040;
+  border-radius: 14px;
+  padding: 1.25rem;
+  width: min(440px, 100%);
+  max-height: 85vh;
+  overflow-y: auto;
+  text-align: left;
+}
+
+.modal-wide {
+  width: min(640px, 100%);
+}
+
+.modal h2 {
+  margin: 0 0 0.5rem;
+}
+
+.modal-hint {
+  font-size: 0.88rem;
+  margin-bottom: 1rem;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.upload-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  color: #b8c2d3;
+}
+
+.upload-form input[type='text'],
+.upload-form input[type='file'],
+.upload-form select {
+  border: 1px solid #2a3040;
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  background: #191d27;
+  color: #eaf1ff;
+  font: inherit;
+}
+
+.checkbox-row {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.5rem !important;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.audit-list-full {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
 .audit-list li {
@@ -182,7 +349,12 @@ button:hover {
   }
 }
 
-.app h1,
+.app h1 {
+  margin: 0.35rem 0 0.5rem;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: #f5f7fc;
+}
+
 .app h2,
 .app h3,
 .app strong {
