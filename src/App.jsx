@@ -208,7 +208,7 @@ function App() {
     <div className="app">
       <header className="topbar">
         <div>
-          <p className="eyebrow">Gatekeeper Audio</p>
+          <p className="eyebrow">AW APP DASHBOARDo</p>
           <h1>Secure Stem Vault Dashboard</h1>
           <p className="subtitle">
             Live dashboard — API, Python automation (transcode + security), and
