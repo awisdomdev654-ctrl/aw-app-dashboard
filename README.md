@@ -2,6 +2,15 @@
 
 Secure stem vault dashboard with a Next.js API, React frontend, and Python automation (transcoding + security remediation).
 
+**Stack:** Node.js (requests + uploads) · MongoDB (stems + audit trail) · Python (transcode + security remediation).
+
+## Documentation
+
+| Doc | Contents |
+|-----|----------|
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | System map, layer responsibilities, component paths, data models |
+| [docs/API.md](./docs/API.md) | Backend API reference, request/response schemas, workflow sequence diagrams |
+
 ## Run locally
 
 **Terminal 1 — API**
