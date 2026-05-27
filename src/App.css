@@ -102,13 +102,41 @@
 }
 
 .status {
-  color: #1db954;
   font-size: 0.82rem;
   font-weight: 600;
-  border: 1px solid rgba(29, 185, 84, 0.4);
-  padding: 0.2rem 0.5rem;
+  padding: 0.25rem 0.55rem;
   border-radius: 8px;
   white-space: nowrap;
+}
+
+.status-encrypted {
+  color: #0a0d14;
+  background: #1db954;
+  border: 1px solid #1db954;
+}
+
+.status-review {
+  color: #1db954;
+  background: transparent;
+  border: 1px solid rgba(29, 185, 84, 0.55);
+}
+
+.status-active {
+  color: #1db954;
+  background: transparent;
+  border: 1px solid rgba(29, 185, 84, 0.55);
+}
+
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .audit-list li {
@@ -182,7 +210,12 @@ button:hover {
   }
 }
 
-.app h1,
+.app h1 {
+  margin: 0.35rem 0 0.5rem;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  color: #f5f7fc;
+}
+
 .app h2,
 .app h3,
 .app strong {
