@@ -209,7 +209,7 @@ function App() {
       <header className="topbar">
         <div>
           <p className="eyebrow">AW APP DASHBOARDo</p>
-          <h1>Secure Stem VaultE Dashboard</h1>
+          <h1>Secure Stem Vault Dashboard</h1>
           <p className="subtitle">
             Live dashboard — API, Python automation (transcode + security), and
             secure stem storage.
