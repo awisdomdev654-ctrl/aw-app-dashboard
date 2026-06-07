@@ -8,9 +8,8 @@ body {
     Segoe UI,
     Roboto,
     sans-serif;
-  background: radial-gradient(circle at 20% -10%, #17382b, transparent 45%),
-    #0a0d14;
-  color: #d6deec;
+  background: #0a0a0a;
+  color: #ffffff;
 }
 
 #root {

@@ -104,6 +104,20 @@ export async function uploadStemDirect(file, { title, owner }) {
   }
 }
 
+export async function uploadStemMongo(file, { title, owner }) {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('title', title)
+  formData.append('owner', owner)
+  formData.append('actorId', ACTOR.actorId)
+  formData.append('actorLabel', ACTOR.actorLabel)
+
+  return request('/api/upload/mongo', {
+    method: 'POST',
+    body: formData,
+  })
+}
+
 export async function uploadStemPipeline(file, { title, owner, format = 'flac' }) {
   const formData = new FormData()
   formData.append('file', file)

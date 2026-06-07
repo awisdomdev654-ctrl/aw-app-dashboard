@@ -14,25 +14,28 @@
 }
 
 .eyebrow {
-  color: #1db954;
+  color: #ffffff;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  margin: 0 0 0.75rem;
 }
 
 .subtitle {
   max-width: 44rem;
+  color: #9ca3af;
 }
 
 .security-pill {
-  border: 1px solid rgba(29, 185, 84, 0.45);
-  background: rgba(29, 185, 84, 0.12);
-  color: #7ff2aa;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
   padding: 0.55rem 0.85rem;
   border-radius: 999px;
   font-size: 0.85rem;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .metrics-grid {
@@ -44,21 +47,23 @@
 .metric-card,
 .panel,
 .roadmap {
-  background: #12141a;
-  border: 1px solid #2a3040;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
   border-radius: 14px;
-  padding: 1rem;
+  padding: 1.25rem;
   text-align: left;
 }
 
 .metric-card p,
 .metric-card span {
-  color: #b8c2d3;
+  color: #9ca3af;
+  font-size: 0.9rem;
 }
 
 .metric-card h2 {
   margin: 0.35rem 0;
-  color: #f5f7fc;
+  color: #ffffff;
+  font-size: 2rem;
 }
 
 .panel-grid {
@@ -89,42 +94,42 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 0.7rem;
-  border: 1px solid #2a3040;
+  padding: 0.85rem 1rem;
+  border: 1px solid #2a2a2a;
   border-radius: 10px;
-  background: #191d27;
+  background: #141414;
 }
 
 .stem-list li p {
   margin-top: 0.2rem;
-  color: #9dadc8;
+  color: #9ca3af;
   font-size: 0.9rem;
 }
 
 .status {
   font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.25rem 0.55rem;
-  border-radius: 8px;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
   white-space: nowrap;
 }
 
 .status-solid {
-  color: #0a0d14;
-  background: #1db954;
-  border: 1px solid #1db954;
+  color: #6ee7b7;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.45);
 }
 
 .status-outline {
-  color: #1db954;
-  background: transparent;
-  border: 1px solid rgba(29, 185, 84, 0.55);
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.55);
 }
 
 .status-pending {
-  color: #f5c842;
+  color: #fde68a;
   background: rgba(245, 200, 66, 0.12);
-  border: 1px solid rgba(245, 200, 66, 0.55);
+  border: 1px solid rgba(245, 200, 66, 0.45);
 }
 
 .stem-actions {
@@ -160,11 +165,11 @@
 }
 
 .dot.ok {
-  background: #1db954;
+  background: #10b981;
 }
 
 .dot.bad {
-  background: #e85d5d;
+  background: #ef4444;
 }
 
 .banner {
@@ -178,9 +183,9 @@
 }
 
 .banner-error {
-  background: rgba(232, 93, 93, 0.15);
-  border: 1px solid rgba(232, 93, 93, 0.45);
-  color: #ffb4b4;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #fca5a5;
 }
 
 .banner-dismiss {
@@ -190,7 +195,7 @@
 
 .loading,
 .empty-state {
-  color: #9dadc8;
+  color: #9ca3af;
   text-align: left;
   margin: 0;
 }
@@ -198,7 +203,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -207,8 +212,8 @@
 }
 
 .modal {
-  background: #12141a;
-  border: 1px solid #2a3040;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
   border-radius: 14px;
   padding: 1.25rem;
   width: min(440px, 100%);
@@ -228,6 +233,7 @@
 .modal-hint {
   font-size: 0.88rem;
   margin-bottom: 1rem;
+  color: #9ca3af;
 }
 
 .upload-form {
@@ -241,17 +247,17 @@
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.88rem;
-  color: #b8c2d3;
+  color: #9ca3af;
 }
 
 .upload-form input[type='text'],
 .upload-form input[type='file'],
 .upload-form select {
-  border: 1px solid #2a3040;
+  border: 1px solid #2a2a2a;
   border-radius: 8px;
   padding: 0.5rem 0.65rem;
-  background: #191d27;
-  color: #eaf1ff;
+  background: #141414;
+  color: #ffffff;
   font: inherit;
 }
 
@@ -279,10 +285,16 @@ button:disabled {
 }
 
 .audit-list li {
-  color: #d6deec;
+  color: #d1d5db;
   padding: 0.55rem 0.7rem;
   border-radius: 8px;
-  background: #191d27;
+  background: #141414;
+  font-size: 0.92rem;
+}
+
+.audit-list li strong {
+  color: #ffffff;
+  font-weight: 600;
 }
 
 .panel-footer {
@@ -297,24 +309,24 @@ button:disabled {
 }
 
 .roadmap-items > div {
-  border: 1px solid #2a3040;
+  border: 1px solid #2a2a2a;
   border-radius: 10px;
   padding: 0.8rem;
-  background: #191d27;
+  background: #141414;
 }
 
 button {
-  border: 1px solid #2a3040;
+  border: 1px solid #2a2a2a;
   border-radius: 10px;
   padding: 0.5rem 0.8rem;
-  background: #1f2430;
-  color: #eaf1ff;
+  background: #141414;
+  color: #ffffff;
   font-weight: 600;
   cursor: pointer;
 }
 
-button:hover {
-  border-color: #1db954;
+button:hover:not(:disabled) {
+  border-color: #10b981;
 }
 
 @media (max-width: 980px) {
@@ -350,15 +362,15 @@ button:hover {
 }
 
 .app h1 {
-  margin: 0.35rem 0 0.5rem;
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
-  color: #f5f7fc;
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  color: #ffffff;
 }
 
 .app h2,
 .app h3,
 .app strong {
-  color: #f5f7fc;
+  color: #ffffff;
 }
 
 .app h3 {
@@ -366,7 +378,7 @@ button:hover {
 }
 
 .app p {
-  color: #b8c2d3;
+  color: #9ca3af;
 }
 
 .app main,
