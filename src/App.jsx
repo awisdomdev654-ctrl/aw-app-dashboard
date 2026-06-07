@@ -7,8 +7,7 @@ import {
   fetchStems,
   issueDownloadUrl,
   runSecurityScan,
-  uploadStemDirect,
-  uploadStemPipeline,
+  uploadStemMongo,
 } from './lib/gatekeeperApi'
 
 function statusVariant(status) {
@@ -127,25 +126,26 @@ function App() {
     }
   }
 
-  const handleUpload = async (event) => {
+  const handleUploadStem = async (event) => {
     event.preventDefault()
     if (!uploadForm.file) return
 
     setBusy('upload')
     setError('')
     try {
-      if (uploadForm.usePipeline) {
-        await uploadStemPipeline(uploadForm.file, {
-          title: uploadForm.title,
-          owner: uploadForm.owner,
-          format: uploadForm.format,
-        })
-      } else {
-        await uploadStemDirect(uploadForm.file, {
-          title: uploadForm.title,
-          owner: uploadForm.owner,
-        })
+      const result = await uploadStemMongo(uploadForm.file, {
+        title: uploadForm.title,
+        owner: uploadForm.owner,
+      })
+
+      if (!result?.ok) {
+        throw new Error(
+          typeof result?.error === 'string'
+            ? result.error
+            : 'Upload failed — stem was not saved',
+        )
       }
+
       setShowUpload(false)
       setUploadForm((prev) => ({ ...prev, file: null, title: '' }))
       await loadDashboard()
@@ -208,11 +208,10 @@ function App() {
     <div className="app">
       <header className="topbar">
         <div>
-          <p className="eyebrow">AW APP DASHBOARDo</p>
+          <p className="eyebrow">GATEKEEPER AUDIO</p>
           <h1>Secure Stem Vault Dashboard</h1>
           <p className="subtitle">
-            Live dashboard — API, Python automation (transcode + security), and
-            secure stem storage.
+            Frontend prototype for secure collaboration on unreleased music projects.
           </p>
         </div>
         <div
@@ -341,7 +340,7 @@ function App() {
               Python pipeline transcodes audio, strips metadata, runs security checks,
               then uploads via the API.
             </p>
-            <form className="upload-form" onSubmit={handleUpload}>
+            <form className="upload-form" onSubmit={handleUploadStem}>
               <label>
                 Audio file
                 <input
