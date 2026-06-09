@@ -175,29 +175,29 @@ function App() {
   }
 
   const metricCards = [
-    {
-          title: 'Active Sessions',
-          value: String(metrics.activeSessions),
-          detail: `${metrics.highPrioritySessions} high-priority sessions in progress`,
-        },
-        {
-          title: 'Encrypted Stems',
-          value: String(metrics.encryptedStems),
-          detail: 'All protected in secure object storage',
-        },
-        {
-          title: 'Pending Reviews',
-          value: String(metrics.pendingReviews),
-          detail: `${metrics.awaitingProducer} awaiting producer approval`,
-        },
-        {
-          title: 'Audit Events (24h)',
-          value: String(metrics.auditEvents24h),
-          detail: !securityOk
-            ? 'Suspicious activity detected — review audit trail'
-            : 'No suspicious activity detected',
-       },
-     ]; 
+  {
+    title: 'Active Sessions',
+    value: String(metrics?.activeSessions || 0),
+    detail: `${metrics?.highPrioritySessions || 0} high-priority sessions in progress`,
+  },
+  {
+    title: 'Encrypted Stems',
+    value: String(metrics?.encryptedStems || 0),
+    detail: 'All protected in secure object storage',
+  },
+  {
+    title: 'Pending Reviews',
+    value: String(metrics?.pendingReviews || 0),
+    detail: `${metrics?.awaitingProducer || 0} awaiting producer approval`,
+  },
+  {
+    title: 'Audit Events (24h)',
+    value: String(metrics?.auditEvents24h || 0),
+    detail: !securityOk
+      ? 'Suspicious activity detected — review audit trail'
+      : 'No suspicious activity detected',
+  },
+];
 
   const mongoOk = health?.mongo
   const s3Ok = health?.s3
