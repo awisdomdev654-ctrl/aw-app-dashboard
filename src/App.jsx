@@ -174,9 +174,8 @@ function App() {
     }
   }
 
-  const metricCards = metrics
-    ? [
-        {
+  const metricCards = [
+    {
           title: 'Active Sessions',
           value: String(metrics.activeSessions),
           detail: `${metrics.highPrioritySessions} high-priority sessions in progress`,
@@ -197,9 +196,8 @@ function App() {
           detail: !securityOk
             ? 'Suspicious activity detected — review audit trail'
             : 'No suspicious activity detected',
-        },
-      ]
-    : []
+       },
+     ]; 
 
   const mongoOk = health?.mongo
   const s3Ok = health?.s3
