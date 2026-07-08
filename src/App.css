@@ -91,13 +91,33 @@
 
 .stem-list li {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.65rem;
   padding: 0.85rem 1rem;
   border: 1px solid #2a2a2a;
   border-radius: 10px;
   background: #141414;
+}
+
+.stem-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.audio-player-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #2a2a2a;
+}
+
+.audio-player-row audio {
+  flex: 1;
+  height: 32px;
 }
 
 .stem-list li p {
@@ -130,6 +150,40 @@
   color: #fde68a;
   background: rgba(245, 200, 66, 0.12);
   border: 1px solid rgba(245, 200, 66, 0.45);
+}
+
+.status-review {
+  color: #93c5fd;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.45);
+}
+
+.status-danger {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+}
+
+.btn-approve {
+  border-color: rgba(16, 185, 129, 0.55);
+  background: rgba(16, 185, 129, 0.16);
+  color: #6ee7b7;
+}
+
+.btn-approve:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.3);
+  border-color: rgba(16, 185, 129, 0.8);
+}
+
+.btn-reject {
+  border-color: rgba(239, 68, 68, 0.55);
+  background: rgba(239, 68, 68, 0.16);
+  color: #fca5a5;
+}
+
+.btn-reject:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.8);
 }
 
 .stem-actions {
@@ -252,13 +306,17 @@
 
 .upload-form input[type='text'],
 .upload-form input[type='file'],
-.upload-form select {
+.upload-form input[type='email'],
+.upload-form input[type='password'],
+.upload-form select,
+.upload-form textarea {
   border: 1px solid #2a2a2a;
   border-radius: 8px;
   padding: 0.5rem 0.65rem;
   background: #141414;
   color: #ffffff;
   font: inherit;
+  resize: vertical;
 }
 
 .checkbox-row {
@@ -355,7 +413,7 @@ button:hover:not(:disabled) {
     grid-template-columns: 1fr;
   }
 
-  .stem-list li {
+  .stem-row {
     flex-direction: column;
     align-items: flex-start;
   }

@@ -1,4 +1,6 @@
-const API_BASE = import.meta.env.VITE_GATEKEEPER_API_URL ?? ''
+const API_BASE = 'http://localhost:3000'
+ 
+
 
 const ACTOR = {
   actorId: 'dashboard',
@@ -106,13 +108,13 @@ export async function uploadStemDirect(file, { title, owner }) {
 
 export async function uploadStemMongo(file, { title, owner }) {
   const formData = new FormData()
-  formData.append('file', file)
+  formData.append('file', file) // ↩️ Put back to 'file'
   formData.append('title', title)
   formData.append('owner', owner)
   formData.append('actorId', ACTOR.actorId)
   formData.append('actorLabel', ACTOR.actorLabel)
 
-  return request('/api/upload/mongo', {
+  return request('/api/upload/mongo', { // ↩️ Put back to original route
     method: 'POST',
     body: formData,
   })
@@ -135,5 +137,19 @@ export async function issueDownloadUrl(stemId) {
   return request('/api/download/presign', {
     method: 'POST',
     body: JSON.stringify({ stemId, ...ACTOR }),
+  })
+}
+
+export async function approveStem(stemId, { reviewerName } = {}) {
+  return request(`/api/stems/${stemId}/approve`, {
+    method: 'POST',
+    body: JSON.stringify({ reviewerName, ...ACTOR }),
+  })
+}
+
+export async function rejectStem(stemId, { reviewerName, reason } = {}) {
+  return request(`/api/stems/${stemId}/reject`, {
+    method: 'POST',
+    body: JSON.stringify({ reviewerName, reason, ...ACTOR }),
   })
 }

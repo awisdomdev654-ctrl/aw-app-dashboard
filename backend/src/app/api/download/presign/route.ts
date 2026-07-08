@@ -3,6 +3,7 @@ import { StemModel, type StemDoc } from '@/models/Stem'
 import { connectDB, isMongoConfigured } from '@/lib/mongodb'
 import { logAuditEvent } from '@/lib/audit'
 import { presignGetStemObject } from '@/lib/s3'
+import { parseGridFSKey } from '@/lib/gridfs'
 import { getEnv } from '@/lib/env'
 import { corsHeaders, jsonResponse } from '@/lib/cors'
 
@@ -67,6 +68,18 @@ export async function POST(request: Request) {
       downloadUrl: null,
       message:
         'GATEKEEPER_MOCK_CLOUD is enabled; configure AWS for real GET presigned URLs.',
+    })
+  }
+
+  const gridfsFileId = parseGridFSKey(stem.s3Key)
+  if (gridfsFileId) {
+    const origin = new URL(request.url).origin
+    return jsonResponse({
+      stemId,
+      expiresIn: 600,
+      downloadUrl: `${origin}/api/download/gridfs?stemId=${encodeURIComponent(stemId)}&fileId=${encodeURIComponent(gridfsFileId)}`,
+      mockCloud: false,
+      storage: 'gridfs',
     })
   }
 

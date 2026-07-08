@@ -5,6 +5,7 @@ export type StemStatus =
   | 'encrypted'
   | 'awaiting_review'
   | 'signed_url_active'
+  | 'rejected'
 
 export interface StemDoc {
   stemId: string
@@ -15,6 +16,9 @@ export interface StemDoc {
   contentType: string
   version: number
   sizeBytes?: number
+  reviewedBy?: string
+  reviewedAt?: Date
+  rejectionReason?: string
   createdAt: Date
   updatedAt: Date
 }
@@ -32,12 +36,16 @@ const StemSchema = new Schema<StemDoc>(
         'encrypted',
         'awaiting_review',
         'signed_url_active',
+        'rejected',
       ],
     },
     s3Key: { type: String, required: true },
     contentType: { type: String, required: true },
     version: { type: Number, required: true, default: 1 },
     sizeBytes: { type: Number },
+    reviewedBy: { type: String },
+    reviewedAt: { type: Date },
+    rejectionReason: { type: String },
   },
   { timestamps: true },
 )

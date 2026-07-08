@@ -5,6 +5,7 @@ import { logAuditEvent } from '@/lib/audit'
 import { uploadToGridFS } from '@/lib/gridfs'
 import { createStemId, sanitizeFilename } from '@/lib/stemId'
 import { corsHeaders, jsonResponse } from '@/lib/cors'
+import { notifyOwner } from '@/lib/notifyOwner'
 
 export const runtime = 'nodejs'
 
@@ -68,7 +69,7 @@ export async function POST(request: Request) {
       stemId,
       title,
       owner,
-      status: 'encrypted',
+      status: 'awaiting_review',
       s3Key,
       contentType,
       version: 1,
@@ -78,11 +79,12 @@ export async function POST(request: Request) {
     await logAuditEvent({
       actorId,
       actorLabel,
-      action: 'upload_completed',
+      action: 'review_requested',
       resourceType: 'upload',
       resourceId: stemId,
       detail: {
         title,
+        owner,
         filename: safeName,
         sizeBytes: file.size,
         storage: 'gridfs',
@@ -90,10 +92,13 @@ export async function POST(request: Request) {
       },
     })
 
+    // 📨 Tell the owner/producer a stem is waiting on their sign-off.
+    await notifyOwner({ stem: { stemId, title, owner }, action: 'review_requested' })
+
     return jsonResponse({
       ok: true,
       stemId,
-      status: 'encrypted',
+      status: 'awaiting_review',
       gridfsFileId: fileId,
     })
   } catch (err) {
