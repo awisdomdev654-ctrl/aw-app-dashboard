@@ -9,7 +9,7 @@ export const runtime = 'nodejs'
 // ✅ APPROVE — moves a stem out of review and into the encrypted vault
 export async function POST(
   request: Request,
-  { params }: { params: { stemId: string } },
+  { params }: { params: Promise<{ stemId: string }> },
 ) {
   if (!isMongoConfigured()) {
     return jsonResponse({ error: 'MongoDB is not configured' }, { status: 503 })
@@ -17,7 +17,8 @@ export async function POST(
 
   await connectDB()
 
-  const { stemId } = params
+  // Safely await the params promise to conform to Next.js strict type requirements
+  const { stemId } = await params
   const body = await request.json().catch(() => ({}))
   const { actorId, actorLabel, reviewerName } = body ?? {}
 

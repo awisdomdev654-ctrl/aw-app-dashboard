@@ -3,6 +3,7 @@ import { StemModel } from '@/models/Stem'
 import { connectDB, isMongoConfigured } from '@/lib/mongodb'
 import { logAuditEvent } from '@/lib/audit'
 import { uploadToGridFS } from '@/lib/gridfs'
+import { uploadStemToS3, isS3Configured } from '@/lib/s3'
 import { createStemId, sanitizeFilename } from '@/lib/stemId'
 import { corsHeaders, jsonResponse } from '@/lib/cors'
 import { notifyOwner } from '@/lib/notifyOwner'
@@ -20,6 +21,13 @@ export async function POST(request: Request) {
   if (!isMongoConfigured()) {
     return jsonResponse(
       { ok: false, error: 'MongoDB is not configured (set MONGODB_URI)' },
+      { status: 503 },
+    )
+  }
+
+  if (!isS3Configured()) {
+    return jsonResponse(
+      { ok: false, error: 'S3 is not configured (set AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, GATEKEEPER_S3_BUCKET)' },
       { status: 503 },
     )
   }
@@ -56,6 +64,8 @@ export async function POST(request: Request) {
     await connectDB()
 
     const buffer = Buffer.from(await file.arrayBuffer())
+
+    // 1️⃣ GridFS — keeps the original file accessible via MongoDB for internal use
     const { fileId } = await uploadToGridFS(buffer, safeName, {
       stemId,
       title,
@@ -63,7 +73,11 @@ export async function POST(request: Request) {
       contentType,
     })
 
-    const s3Key = `gridfs://${fileId}`
+    // 2️⃣ S3 — the actual object the presigned URL will point at.
+    // Key matches the gridfs/ID convention already stored in the DB so
+    // existing presign logic works without any changes.
+    const s3Key = `gridfs/${fileId}`
+    await uploadStemToS3(buffer, s3Key, contentType)
 
     await StemModel.create({
       stemId,

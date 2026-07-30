@@ -545,6 +545,7 @@ function App() {
                           <audio
                             controls
                             autoPlay
+                            crossOrigin="anonymous"
                             src={activePlayer.url}
                             onEnded={() => setActivePlayer(null)}
                             onError={() =>

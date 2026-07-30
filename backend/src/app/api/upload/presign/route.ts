@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { StemModel } from '@/models/Stem'
 import { connectDB, isMongoConfigured } from '@/lib/mongodb'
 import { logAuditEvent } from '@/lib/audit'
-import { presignPutStemObject } from '@/lib/s3'
+import { getUploadPresignedUrl } from '@/lib/s3' // <-- Fixed import name
 import { getEnv } from '@/lib/env'
 import { createStemId, sanitizeFilename } from '@/lib/stemId'
 import { corsHeaders, jsonResponse } from '@/lib/cors'
@@ -80,8 +80,19 @@ export async function POST(request: Request) {
     })
   }
 
-  const signed = await presignPutStemObject({ s3Key, contentType })
-  if (!signed) {
+  // Use the correct helper with positional arguments (s3Key, contentType)
+  try {
+    const signed = await getUploadPresignedUrl(s3Key, contentType)
+    
+    return jsonResponse({
+      stemId,
+      s3Key,
+      expiresIn: signed.expiresIn,
+      uploadUrl: signed.uploadUrl,
+      serverSideEncryption: 'AES256',
+      mockCloud: false,
+    })
+  } catch (error) {
     return jsonResponse(
       {
         error:
@@ -92,15 +103,6 @@ export async function POST(request: Request) {
       { status: 503 },
     )
   }
-
-  return jsonResponse({
-    stemId,
-    s3Key,
-    expiresIn: signed.expiresIn,
-    uploadUrl: signed.url,
-    serverSideEncryption: 'AES256',
-    mockCloud: false,
-  })
 }
 
 export async function OPTIONS() {

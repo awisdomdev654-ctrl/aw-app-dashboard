@@ -1,0 +1,119 @@
+# =============================================================================
+# docker-compose.yml  (project root: AW-APP-Project 2/)
+#
+# Local orchestration for Gatekeeper Audio.
+# Bring everything up with:  docker compose up --build
+# Tear it down with:         docker compose down -v
+#
+# Secrets are read from backend/.env — never committed to git.
+# =============================================================================
+
+name: gatekeeper-audio
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Backend — Next.js / Node.js API
+  # Builds from ./backend using the multi-stage Dockerfile.
+  # ---------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gatekeeper-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/gatekeeper
+      NODE_ENV: production
+      SENTINEL_URL: http://sentinel:8080
+      AWS_REGION: us-east-2
+      S3_BUCKET: aw-bucket-v1
+      GATEKEEPER_S3_BUCKET: aw-bucket-v1
+      GATEKEEPER_SCAN_LAMBDA_NAME: gatekeeper-security-scan
+      # AWS credentials — set these via shell environment to avoid + corruption:
+      # export AWS_ACCESS_KEY_ID=your-key
+      # export AWS_SECRET_ACCESS_KEY=your-secret
+      # then run: docker compose up
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    networks:
+      - gatekeeper-net
+    volumes:
+      - nextjs-cache:/app/.next/cache
+
+  # ---------------------------------------------------------------------------
+  # MongoDB — local replica of the Atlas database for dev/testing
+  # ---------------------------------------------------------------------------
+  mongo:
+    image: mongo:7
+    container_name: gatekeeper-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"           # expose so MongoDB Compass can connect locally
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - gatekeeper-net
+
+  # ---------------------------------------------------------------------------
+  # Python Security Sentinel
+  # Polls MongoDB directly and posts findings to the audit trail.
+  # Checks: stale reviews, presign floods, unscanned approvals,
+  # rejection spikes. Runs every 60s by default (SENTINEL_POLL_INTERVAL_SECONDS).
+  # ---------------------------------------------------------------------------
+  sentinel:
+    build:
+      context: ./sentinel
+      dockerfile: Dockerfile
+    container_name: gatekeeper-sentinel
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/gatekeeper
+      GATEKEEPER_API_URL: http://backend:3000
+      SENTINEL_POLL_INTERVAL_SECONDS: "60"
+      SENTINEL_STALE_REVIEW_HOURS: "24"
+      SENTINEL_PRESIGN_FLOOD_LIMIT: "10"
+      SENTINEL_REJECTION_SPIKE_LIMIT: "3"
+      SENTINEL_HTTP_PORT: "8080"
+    # Port 8080 is intentionally NOT published to the host — only the backend
+    # container on gatekeeper-net can reach http://sentinel:8080.
+    expose:
+      - "8080"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    networks:
+      - gatekeeper-net
+
+# -----------------------------------------------------------------------------
+# Volumes
+# -----------------------------------------------------------------------------
+volumes:
+  mongo-data:
+    driver: local
+  nextjs-cache:
+    driver: local
+
+# -----------------------------------------------------------------------------
+# Networks
+# All services share one internal bridge network. Only the ports explicitly
+# listed above are reachable from the host machine.
+# -----------------------------------------------------------------------------
+networks:
+  gatekeeper-net:
+    driver: bridge

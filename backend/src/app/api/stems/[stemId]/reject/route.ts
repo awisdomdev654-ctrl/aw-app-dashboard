@@ -2,14 +2,13 @@ import { StemModel } from '@/models/Stem'
 import { connectDB, isMongoConfigured } from '@/lib/mongodb'
 import { logAuditEvent } from '@/lib/audit'
 import { corsHeaders, jsonResponse } from '@/lib/cors'
-//import { notifyOwner } from '@/lib/notifyOwner'
 
 export const runtime = 'nodejs'
 
-// ❌ REJECT — sends a stem back with a reason, never reaches the vault
+// ✅ REJECT — marks a stem as rejected and leaves it out of the vault
 export async function POST(
   request: Request,
-  { params }: { params: { stemId: string } },
+  { params }: { params: Promise<{ stemId: string }> },
 ) {
   if (!isMongoConfigured()) {
     return jsonResponse({ error: 'MongoDB is not configured' }, { status: 503 })
@@ -17,9 +16,10 @@ export async function POST(
 
   await connectDB()
 
-  const { stemId } = params
+  // Safely await the params promise to conform to Next.js 15 requirements
+  const { stemId } = await params
   const body = await request.json().catch(() => ({}))
-  const { actorId, actorLabel, reviewerName, reason } = body ?? {}
+  const { actorId, actorLabel, reviewerName, feedback } = body ?? {}
 
   const stem = await StemModel.findOne({ stemId })
   if (!stem) {
@@ -35,7 +35,9 @@ export async function POST(
   stem.status = 'rejected'
   stem.reviewedBy = reviewerName || actorLabel || 'Unknown reviewer'
   stem.reviewedAt = new Date()
-  stem.rejectionReason = reason || 'No reason provided'
+  if (feedback) {
+    stem.feedback = feedback
+  }
   await stem.save()
 
   await logAuditEvent({
@@ -44,10 +46,8 @@ export async function POST(
     action: 'stem_rejected',
     resourceType: 'stem',
     resourceId: stem.stemId,
-    detail: { title: stem.title, owner: stem.owner, reason: stem.rejectionReason },
+    detail: { title: stem.title, owner: stem.owner, feedback },
   })
-
-  console.log(`[Notification] Stem rejected: ${stem.title}`);
 
   return jsonResponse({ ok: true, success: true, stem })
 }

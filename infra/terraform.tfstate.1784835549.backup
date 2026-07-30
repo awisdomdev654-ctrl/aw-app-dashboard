@@ -1,0 +1,318 @@
+{
+  "version": 4,
+  "terraform_version": "1.15.7",
+  "serial": 18,
+  "lineage": "19a7b9cc-5948-8d6b-32fb-0de0a63f071e",
+  "outputs": {
+    "app_iam_policy_arn": {
+      "value": null,
+      "type": "string"
+    },
+    "bucket_arn": {
+      "value": "arn:aws:s3:::gatekeeper-audio-stems-aw-2026",
+      "type": "string"
+    },
+    "bucket_name": {
+      "value": "gatekeeper-audio-stems-aw-2026",
+      "type": "string"
+    },
+    "bucket_region": {
+      "value": "us-east-1",
+      "type": "string"
+    },
+    "security_scan_lambda_name": {
+      "value": null,
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "mode": "data",
+      "type": "archive_file",
+      "name": "security_scan_zip",
+      "provider": "provider[\"registry.terraform.io/hashicorp/archive\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "exclude_symlink_directories": null,
+            "excludes": null,
+            "id": "8254fc97909c8d614dd3cfbf5efc42ce646ecff8",
+            "output_base64sha256": "xnwr33gUgeTDIHIXOyXrGmXzF3qrWQ4zTPfqOkee+2I=",
+            "output_base64sha512": "E6xP4cyhC+wExhOg2tHILmckHWV7OJj4NY0kl4WDkLj84ROs7GzEr66+RvLlRAU4WBfPK9xZ7jTUhRbd+84O0A==",
+            "output_file_mode": null,
+            "output_md5": "25316903de40f867a993d28ca57143ff",
+            "output_path": "/Users/tonywisdom/AW-APP-Project 2/infra/build/securityScan.zip",
+            "output_sha": "8254fc97909c8d614dd3cfbf5efc42ce646ecff8",
+            "output_sha256": "c67c2bdf781481e4c32072173b25eb1a65f3177aab590e334cf7ea3a479efb62",
+            "output_sha512": "13ac4fe1cca10bec04c613a0dad1c82e67241d657b3898f8358d2497858390b8fce113acec6cc4afaebe46f2e54405385817cf2bdc59ee34d48516ddfbce0ed0",
+            "output_size": 17630,
+            "source": [],
+            "source_content": null,
+            "source_content_filename": null,
+            "source_dir": "/Users/tonywisdom/AW-APP-Project 2/infra/../lambda/securityScan",
+            "source_file": null,
+            "type": "zip"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "data",
+      "type": "aws_iam_policy_document",
+      "name": "stems_access",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "1720867073",
+            "json": "{\n  \"Version\": \"2012-10-17\",\n  \"Statement\": [\n    {\n      \"Sid\": \"AllowListBucket\",\n      \"Effect\": \"Allow\",\n      \"Action\": \"s3:ListBucket\",\n      \"Resource\": \"arn:aws:s3:::gatekeeper-audio-stems-aw-2026\"\n    },\n    {\n      \"Sid\": \"AllowObjectReadWrite\",\n      \"Effect\": \"Allow\",\n      \"Action\": [\n        \"s3:PutObject\",\n        \"s3:GetObject\",\n        \"s3:DeleteObject\"\n      ],\n      \"Resource\": \"arn:aws:s3:::gatekeeper-audio-stems-aw-2026/*\"\n    }\n  ]\n}",
+            "minified_json": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"AllowListBucket\",\"Effect\":\"Allow\",\"Action\":\"s3:ListBucket\",\"Resource\":\"arn:aws:s3:::gatekeeper-audio-stems-aw-2026\"},{\"Sid\":\"AllowObjectReadWrite\",\"Effect\":\"Allow\",\"Action\":[\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\"],\"Resource\":\"arn:aws:s3:::gatekeeper-audio-stems-aw-2026/*\"}]}",
+            "override_json": null,
+            "override_policy_documents": null,
+            "policy_id": null,
+            "source_json": null,
+            "source_policy_documents": null,
+            "statement": [
+              {
+                "actions": [
+                  "s3:ListBucket"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:s3:::gatekeeper-audio-stems-aw-2026"
+                ],
+                "sid": "AllowListBucket"
+              },
+              {
+                "actions": [
+                  "s3:DeleteObject",
+                  "s3:GetObject",
+                  "s3:PutObject"
+                ],
+                "condition": [],
+                "effect": "Allow",
+                "not_actions": [],
+                "not_principals": [],
+                "not_resources": [],
+                "principals": [],
+                "resources": [
+                  "arn:aws:s3:::gatekeeper-audio-stems-aw-2026/*"
+                ],
+                "sid": "AllowObjectReadWrite"
+              }
+            ],
+            "version": "2012-10-17"
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_policy",
+      "name": "stems_access",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "arn": "arn:aws:iam::471147325176:policy/gatekeeper-stems-access-production",
+            "attachment_count": 0,
+            "description": "Restricts access to only the Gatekeeper Audio stems bucket",
+            "id": "arn:aws:iam::471147325176:policy/gatekeeper-stems-access-production",
+            "name": "gatekeeper-stems-access-production",
+            "name_prefix": "",
+            "path": "/",
+            "policy": "{\"Statement\":[{\"Action\":\"s3:ListBucket\",\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::gatekeeper-audio-stems-aw-2026\",\"Sid\":\"AllowListBucket\"},{\"Action\":[\"s3:PutObject\",\"s3:GetObject\",\"s3:DeleteObject\"],\"Effect\":\"Allow\",\"Resource\":\"arn:aws:s3:::gatekeeper-audio-stems-aw-2026/*\",\"Sid\":\"AllowObjectReadWrite\"}],\"Version\":\"2012-10-17\"}",
+            "policy_id": "ANPAW3MURU34GMKKB4ZSZ",
+            "tags": {},
+            "tags_all": {}
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "aws_s3_bucket.stems",
+            "data.aws_iam_policy_document.stems_access"
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_iam_user_policy_attachment",
+      "name": "gatekeeper_s3_access",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": []
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "stem_vault",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "acceleration_status": "",
+            "acl": null,
+            "arn": "arn:aws:s3:::gatekeeper-audio-stems-aw-2026",
+            "bucket": "gatekeeper-audio-stems-aw-2026",
+            "bucket_domain_name": "gatekeeper-audio-stems-aw-2026.s3.amazonaws.com",
+            "bucket_prefix": "",
+            "bucket_regional_domain_name": "gatekeeper-audio-stems-aw-2026.s3.us-east-1.amazonaws.com",
+            "cors_rule": [],
+            "force_destroy": null,
+            "grant": [
+              {
+                "id": "c8954ff204bb059207cca6ee7f5870575c5334015e1066f77b94ee28fd6a3cf3",
+                "permissions": [
+                  "FULL_CONTROL"
+                ],
+                "type": "CanonicalUser",
+                "uri": ""
+              }
+            ],
+            "hosted_zone_id": "Z3AQBSTGFYJSTF",
+            "id": "gatekeeper-audio-stems-aw-2026",
+            "lifecycle_rule": [],
+            "logging": [],
+            "object_lock_configuration": [],
+            "object_lock_enabled": false,
+            "policy": "",
+            "region": "us-east-1",
+            "replication_configuration": [],
+            "request_payer": "BucketOwner",
+            "server_side_encryption_configuration": [
+              {
+                "rule": [
+                  {
+                    "apply_server_side_encryption_by_default": [
+                      {
+                        "kms_master_key_id": "",
+                        "sse_algorithm": "AES256"
+                      }
+                    ],
+                    "bucket_key_enabled": false
+                  }
+                ]
+              }
+            ],
+            "tags": {
+              "Environment": "production",
+              "Project": "GatekeeperAudio",
+              "Purpose": "stems-storage"
+            },
+            "tags_all": {
+              "Environment": "production",
+              "Project": "GatekeeperAudio",
+              "Purpose": "stems-storage"
+            },
+            "timeouts": null,
+            "versioning": [
+              {
+                "enabled": true,
+                "mfa_delete": false
+              }
+            ],
+            "website": [],
+            "website_domain": null,
+            "website_endpoint": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjM2MDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH0sInNjaGVtYV92ZXJzaW9uIjoiMCJ9"
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_public_access_block",
+      "name": "stem_vault",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "block_public_acls": true,
+            "block_public_policy": true,
+            "bucket": "gatekeeper-audio-stems-aw-2026",
+            "id": "gatekeeper-audio-stems-aw-2026",
+            "ignore_public_acls": true,
+            "restrict_public_buckets": true
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjAifQ=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_server_side_encryption_configuration",
+      "name": "stem_vault",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "gatekeeper-audio-stems-aw-2026",
+            "expected_bucket_owner": "",
+            "id": "gatekeeper-audio-stems-aw-2026",
+            "rule": [
+              {
+                "apply_server_side_encryption_by_default": [
+                  {
+                    "kms_master_key_id": "",
+                    "sse_algorithm": "AES256"
+                  }
+                ],
+                "bucket_key_enabled": false
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjAifQ=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "aws_s3_bucket_versioning",
+      "name": "stem_vault",
+      "provider": "provider[\"registry.terraform.io/hashicorp/aws\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "bucket": "gatekeeper-audio-stems-aw-2026",
+            "expected_bucket_owner": "",
+            "id": "gatekeeper-audio-stems-aw-2026",
+            "mfa": null,
+            "versioning_configuration": [
+              {
+                "mfa_delete": "",
+                "status": "Enabled"
+              }
+            ]
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjAifQ=="
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

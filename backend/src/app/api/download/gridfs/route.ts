@@ -27,7 +27,8 @@ export async function GET(request: Request) {
 
   await connectDB()
 
-  const stem = await StemModel.findOne({ stemId }).lean()
+  // Use a type assertion (as any) here to satisfy TypeScript when reading from a .lean() document
+  const stem = (await StemModel.findOne({ stemId }).lean()) as any
   if (!stem) {
     return jsonResponse({ error: 'Stem not found' }, { status: 404 })
   }

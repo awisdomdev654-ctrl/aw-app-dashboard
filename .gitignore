@@ -28,3 +28,5 @@ automation/.venv/
 automation/**/__pycache__/
 automation/**/*.pyc
 automation/.env
+backend/.env
+.env
