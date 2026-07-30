@@ -30,3 +30,5 @@ automation/**/*.pyc
 automation/.env
 backend/.env
 .env
+infra/.terraform/
+infra/build/
