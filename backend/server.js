@@ -3,11 +3,14 @@ const cors = require('cors');
 const cryptRouter = require('./crypt');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 const ALLOWED_ORIGINS = [
   'http://localhost:5173', // Vite primary port
   'http://localhost:5174', // Vite fallback port
+  ...(process.env.GATEKEEPER_CORS_ORIGIN
+    ? process.env.GATEKEEPER_CORS_ORIGIN.split(',').map((o) => o.trim())
+    : []),
 ];
 
 // Explicit CORS config — reflect the caller's origin dynamically so both
