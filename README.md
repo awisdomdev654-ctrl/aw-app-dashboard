@@ -11,38 +11,10 @@ Secure stem vault dashboard with a Next.js API, React frontend, and Python autom
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System map, layer responsibilities, component paths, data models |
 | [docs/API.md](./docs/API.md) | Backend API reference, request/response schemas, workflow sequence diagrams |
 
-## Run locally
 
-**Terminal 1 — API**
+DEMO VIDEO HERE! 
+https://www.youtube.com/shorts/r8fYyBm92u4
 
-```bash
-cd backend
-cp .env.example .env   # set MONGODB_URI, optional AWS
-npm install
-npm run dev
-```
-
-**Terminal 2 — Dashboard**
-
-```bash
-npm install
-npm run dev
-```
-
-Open http://localhost:5173 — Vite proxies `/api` to the backend on port 3000.
-
-**Python automation** (used by upload pipeline + security scan API)
-
-```bash
-cd automation
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pip install -e .
-brew install ffmpeg   # macOS — required for transcoding
-```
-
-Set `GATEKEEPER_PYTHON` in `backend/.env` if `python3` is not on PATH (e.g. `/path/to/automation/.venv/bin/python3`).
 
 ## Production env
 
